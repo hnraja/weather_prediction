@@ -1,6 +1,6 @@
 # Load data 
-source("data.Rmd")
-
+source("data.R")
+head(Valencia)
 
 # Examine data, ACF and PACF
 
