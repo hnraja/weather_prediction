@@ -1,12 +1,6 @@
-```{r setup}
-knitr::opts_chunk$set(echo = TRUE)
-weather_features <- read.csv("weather_features.csv")
-```
-
 ---
 output:
   pdf_document: default
-  html_document: default
 ---
 
 
@@ -14,6 +8,7 @@ output:
 `weather_features.csv` contains hourly weather data from 2015 to 2018 for 5 major cities in Spain.
 
 ```{r}
+weather_features <- read.csv("weather_features.csv")
 df <- data.frame(
   Column = colnames(weather_features),
   Description = c("datetime index localized to CET", 
