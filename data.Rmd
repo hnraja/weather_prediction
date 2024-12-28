@@ -1,9 +1,16 @@
-# Introduction
-```{r}
+```{r setup}
+knitr::opts_chunk$set(echo = TRUE)
 weather_features <- read.csv("weather_features.csv")
-dim(weather_features)
 ```
 
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+
+
+# Introduction
 `weather_features.csv` contains hourly weather data from 2015 to 2018 for 5 major cities in Spain.
 
 ```{r}
@@ -30,6 +37,12 @@ df <- data.frame(
 knitr::kable(df, format = "markdown")
 ```
 
+The last 4 columns are non-numerical, and will be dropped. The data for the city of Barcelona has city_name " Barcelona", the extra space will be removed.
+```{r}
+weather_features <- weather_features[1:13]
+weather_features[weather_features$city_name == " Barcelona",]$city_name = "Barcelona"
+```
+
 
 # Missing Values
 ```{r}
@@ -47,7 +60,7 @@ length(dates_occurences)
 ```
 This matches our expectations.
 
-Since we have 5 cities, we expect each datetime index to appear 5 times. This means a total of $35064 \times 5 = 175320$ rows. However, our data has 178396 rows.
+Since we have 5 cities, we expect each datetime index to appear 5 times. 
 ```{r}
 sum(sapply(dates_occurences, function(date) { date < 5 }))
 ```
@@ -55,42 +68,20 @@ This indicates that we have no missing rows.
 
 
 # Partition Based on City
-However,
-```{r}
-sum(sapply(dates_occurences, function(date) { date > 5 }))
-```
-shows that we have 2550 of the datetime indices have been repeated at least once.
+This means a total of $35064 \times 5 = 175320$ rows. However, our data has 178396 rows. This indicates the presence of duplicated rows.
 
-To fix this, we first create separate data frames for each city, then use the datetime index to remove duplicates.
+To fix this, we first create separate data frames for each city, then remove duplicates.
 ```{r}
 library(dplyr)
-Barcelona <- weather_features[, weather_features$city_name == "Barcelona"]
-Bilbao <- weather_features[, weather_features$city_name == "Bilbao"]
-Madrid <- weather_features[, weather_features$city_name == "Madrid"]
-Seville <- weather_features[, weather_features$city_name == "Seville"]
-Valencia <- weather_features[, weather_features$city_name == "Valencia"]
+Barcelona <- weather_features[weather_features$city_name == "Barcelona", ] %>% distinct()
+Bilbao <- weather_features[weather_features$city_name == "Bilbao", ] %>% distinct()
+Madrid <- weather_features[weather_features$city_name == "Madrid", ] %>% distinct()
+Seville <- weather_features[weather_features$city_name == "Seville", ] %>% distinct()
+Valencia <- weather_features[weather_features$city_name == "Valencia", ] %>% distinct()
 
-sapply(c(Barcelona, Bilbao, Madrid, Seville, Valencia), function(df) {
-  df <- df %>% distinct(dt_iso, .keep_all = TRUE)
-})
-```
-
-#################################################################################################################################3
-
-But wait! using distinct with and without dt_iso parameter has different results! Why?
-```{r}
-library(dplyr)
-Valencia <- weather_features[weather_features$city_name == "Valencia", ]
+dim(Barcelona)
+dim(Bilbao)
+dim(Madrid)
+dim(Seville)
 dim(Valencia)
-df1 <- Valencia %>% distinct()
-df2 <- Valencia %>% distinct(dt_iso, .keep_all = TRUE)
-dim(df1)
-dim(df2)
 ```
-
-```{r}
-length(unique(Valencia$dt_iso))
-```
-
-
-

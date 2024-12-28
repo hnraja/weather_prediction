@@ -1,5 +1,5 @@
-# Load data as time series
-weather_features <- read.csv("weather_features.csv")
+# Load data 
+source("data.Rmd")
 
 
 # Examine data, ACF and PACF
