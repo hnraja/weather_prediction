@@ -9,7 +9,6 @@ Weather features (of interest)
 * Temperature
 * Pressure
 * Humidity
-* Wind (speed, direction)
 
 Cities
 * Barcelona	
