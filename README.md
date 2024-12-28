@@ -1,6 +1,7 @@
 # weather_prediction
 ## Data Source
 Kaggle > Hourly energy demand generation and weather
+
 https://www.kaggle.com/datasets/nicholasjhana/energy-consumption-generation-prices-and-weather?resource=download
 
 ## Data breakdown
@@ -9,6 +10,7 @@ Weather features (of interest)
 * Pressure
 * Humidity
 * Wind (speed, direction)
+
 Cities
 * Barcelona	
 * Bilbao	
