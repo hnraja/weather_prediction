@@ -32,22 +32,24 @@ df <- data.frame(
 knitr::kable(df, format = "markdown")
 ```
 
-The last 4 columns are non-numerical, and will be dropped. The data for the city of Barcelona has city_name " Barcelona", the extra space will be removed.
-```{r}
-weather_features <- weather_features[1:13]
-weather_features[weather_features$city_name == " Barcelona",]$city_name = "Barcelona"
-```
-
 
 # Missing Values
 ```{r}
-sapply(weather_features, function(col) 
+sapply(weather_features, function(col)
   { sum(sapply(col, function(x) {
     (is.na(x)) + (x == "")
   })) })
 ```
 
-Data has no blank or NA cells in any of the columns. Next, we check that there are no missing rows.  
+Data has no blank or NA cells in any of the columns. 
+The last 4 columns are non-numerical, and will be dropped. The data for the city of Barcelona has city_name " Barcelona", the extra space will be removed. The datetime index will be switched to date format.
+```{r}
+weather_features <- weather_features[1:13]
+weather_features[weather_features$city_name == " Barcelona",]$city_name = "Barcelona"
+weather_features$dt_iso <- as.POSIXct(weather_features$dt_iso)
+```
+
+Next, we check that there are no missing rows.  
 Since we have hourly data for 3 regular and 1 leap year, we expect there to be $24 \times 365 \times 4 + 24 = 35064$ unique datetime indices.
 ```{r}
 dates_occurences <- table(weather_features$dt_iso)
