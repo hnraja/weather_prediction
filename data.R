@@ -1,5 +1,7 @@
 # read file
 library(dplyr)
+library(astsa)
+library(forecast)
 weather_features <- read.csv("weather_features.csv")
 
 # remove categorical columns
