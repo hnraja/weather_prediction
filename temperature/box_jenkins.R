@@ -20,6 +20,8 @@ legend("bottomright", col=c("black","blue"), lty=c(1,1),
        legend=c("Training set", "Test set"))
 
 
+
+
 # Load data as time series
 temp <- ts(city$temp, start=c(2015,1), frequency=24)
 train <- window(temp, end=c(2015+floor(n/24), n%%24))
@@ -59,8 +61,8 @@ for (D in c(1:3)) {
   }
 }
 
-# d=1, D=1
-diff1 <- diff(diff(train), lag=24)
+# d=2, D=1
+diff1 <- diff(diff(train, differences = 2), lag=24)
 
 # Plot final differenced data full ACF/PACF
 acf(diff1, lag.max = n)
@@ -71,8 +73,15 @@ acf(diff1, lag.max = 3*24)
 pacf(diff1, lag.max = 3*24)
 
 # Residual diagnostics
+p = 5 # 
+P = 2 # 0, 1
+q = 0 # 
+Q = 0 # 1, 2, 3
+sarima(train, p=1,d=0,q=0,P=2,D=1,Q=0,S=24)
+auto.arima(train, approximation = TRUE, trace=TRUE)
+
+# Residual diagnostics
 # Commented out since some combinations are invalid can cause run time errors
-# library(astsa)
 # for (p in c(0:3)) {
 #   for (P in c(0:3)) {
 #     for (Q in c(0,1)) {
