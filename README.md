@@ -23,3 +23,16 @@ Proposed models
 * Holt Winters
 * Box Jenkins
 
+## File Tree
+* data.R
+  * handles data preprocessing
+  * controls the city, size of train-test split
+  * loaded into other R files
+* data.pdf
+  * document exlplaining data preprocessing found in data.R
+  * generated using data.Rmd
+* weather_features.csv
+  * the data file
+* temperature/box_jenkins.R
+  * implementaion of SARIMA for temperature data (in progress)
+
