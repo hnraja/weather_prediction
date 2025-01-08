@@ -2,18 +2,18 @@
 source("data.R")
 library(xts)
 
-train <- xts(train$temp, order.by = train$dt_iso)
-test <- xts(test$temp, order.by = test$dt_iso)
+train <- xts(train$temp, order.by = as.POSIXct(train$dt_iso))
+plot(train)
+test <- xts(test$temp, order.by = as.POSIXct(test$dt_iso))
 
-# Plot training data full ACF/PACF
-acf(coredata(train), lag.max=n, main="ACF of Madrid Temperature Data")
+# Plot ACF
+acf(coredata(train), lag.max=n, main=paste("ACF of",city_name,"Temperature Data"))
+acf(coredata(train), lag.max=3*24, main="ACF of Madrid Temperature Data")
 pacf(coredata(train), lag.max=n, main="PACF of Madrid Temperature Data")
-
-# Plot training data zoomed in ACF/PACF
-acf(coredata(train), lag.max=3 * 24, main="ACF of Madrid Temperature Data")
-pacf(coredata(train), lag.max=3 *  24, main="PACF of Madrid Temperature Data")
+pacf(coredata(train), lag.max=3*24, main="PACF of Madrid Temperature Data")
 
 # Damped sinusoidal ACF, cut-off PACF ==> AR process
+# seasonality in ACF, with period of 24
 
 # Plot APSE for AR(p) models
 p <- c()
@@ -26,16 +26,20 @@ for (i in c(1:100)) {
 }
 plot(p, APSE,main="APSE for AR(p)", type="l")
 points(p, APSE, pch=20)
+# The minimum APSE is 48.0453 at AR(73)
+# Comparably, AR(25) has an APSE of 51.43322 with 48 fewer parameters.
+# We will propose AR(25) as the best of the AR models.
+
 
 # Find best differencing
 for (D in c(1:3)) {
   diff1 <- diff(coredata(train), differences = D, lag=24)
-  acf(diff1, lag.max = n, main=paste("ACF of d=0 D=",D))
+  acf(diff1, main=paste("ACF of d=0 D=",D))
   diff1 <- diff(coredata(train), differences = D)
-  acf(diff1, lag.max = n, main=paste("ACF of d=",D, "D=0"))
+  acf(diff1, main=paste("ACF of d=",D, "D=0"))
   for (d in c(1:3)) {
     diff1 <- diff(diff(coredata(train), differences = d), differences = D, lag=24)
-    acf(diff1, lag.max = n, main=paste("ACF of d=",d, "D=",D))
+    acf(diff1, main=paste("ACF of d=",d, "D=",D))
   }
 }
 
@@ -53,9 +57,6 @@ pacf(diff1, lag.max = 3*24)
 auto.arima(coredata(train), approximation = TRUE, trace=TRUE)
 # SARIMA(3,0,4)(2,1,0)[24] : 
 # SARIMA(4,1,2)(2,1,0)[24] : Inf (force d=1)
-
-fit <- sarima(train, p=4,d=1,q=2,P=2,D=1,Q=0,S=24)
-pred = predict(fit, length(test))
 
 
 # Residual diagnostics

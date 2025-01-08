@@ -10,9 +10,6 @@ weather_features <- weather_features[1:13]
 # rename " Barcelona" to "Barcelona"
 weather_features[weather_features$city_name == " Barcelona",]$city_name = "Barcelona"
 
-# cast dt_iso as POSIXct
-weather_features$dt_iso <- as.POSIXct(weather_features$dt_iso)
-
 # remove duplicate rows
 Barcelona <- weather_features[weather_features$city_name == "Barcelona", ] %>% distinct()
 Bilbao <- weather_features[weather_features$city_name == "Bilbao", ] %>% distinct()
@@ -22,6 +19,8 @@ Valencia <- weather_features[weather_features$city_name == "Valencia", ] %>% dis
 
 # Select city
 city = Madrid # Barcelona, Bilbao, Madrid, Seville, Valencia
+city_name = city$city_name[1]
+
 
 # Train-test split by percentage
 split_control = 0.9 # control 90-10 train-test split
@@ -34,8 +33,10 @@ test <- city[c((n+1):N), ]
 
 
 # Plot data
+temp <- xts(train$temp[1:200], order.by=as.POSIXct(train$dt_iso[1:200]))
+plot.xts(temp)
 plot(train$dt_iso, train$temp, ylab="Temperature (K)", xlab="Year", type="l",
-     main=paste(city$city_name[1], "Hourly Temperature Data"),  
+     main=paste(city_name, "Hourly Temperature Data"),  
      xlim=c(city[1,]$dt_iso,city[nrow(city),]$dt_iso))
 points(test$dt_iso, test$temp, col="blue", type="l")
 legend("bottomright", col=c("black","blue"), lty=c(1,1), 
